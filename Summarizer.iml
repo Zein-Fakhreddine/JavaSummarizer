@@ -8,9 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
-    <orderEntry type="library" name="com.syncthemall:goose:2.1.25" level="application" />
-    <orderEntry type="library" name="boilerpipe-1.2.0" level="application" />
     <orderEntry type="library" name="jsoup-1.10.3" level="application" />
-    <orderEntry type="library" name="org.json:json:20170516" level="application" />
+    <orderEntry type="library" name="org.jsoup:jsoup:1.10.3" level="application" />
   </component>
 </module>
