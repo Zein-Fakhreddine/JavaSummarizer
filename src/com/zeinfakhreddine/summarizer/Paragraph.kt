@@ -29,7 +29,7 @@ internal class Paragraph(val sentences: ArrayList<String>, val index: Int) {
     private fun calculateTotalWeight(): Int {
         var total = 0
         words.forEach { total += it.weight }
-        return total
+        return total / words.size
     }
 
     /**
@@ -48,9 +48,9 @@ internal class Paragraph(val sentences: ArrayList<String>, val index: Int) {
             if (s1.totalWeight == s2.totalWeight)
                 return 0
             else if (s1.totalWeight > s2.totalWeight)
-                return -1
-            else
                 return 1
+            else
+                return -1
         }
     }
 

@@ -10,13 +10,14 @@ import kotlin.collections.ArrayList
 
 class Summarizer(url: String, var NUMBER_OF_PARAGRAPHS: Int = 4, var title: String? = null) {
 
+
     /**
      *Uses Levenshtein distance to calculate the difference between a given String (this) and a param
      */
     fun String.distanceTo(b: String): Int {
         // i == 0
         val costs = IntArray(b.length + 1)
-        for (j in costs.indices)
+        for (j in costs)
             costs[j] = j
         for (i in 1..this.length) {
             // j == 0; nw = lev(i - 1, j)
@@ -38,7 +39,7 @@ class Summarizer(url: String, var NUMBER_OF_PARAGRAPHS: Int = 4, var title: Stri
      * Loads Document with JSOUP and adds a title if one is not given
      */
     init {
-        val doc: Document = Jsoup.connect(url).userAgent("Mozilla").get()
+        val doc: Document = Jsoup.connect(url).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").get()
         if (title == null)
             title = doc.title()
 
@@ -69,7 +70,7 @@ class Summarizer(url: String, var NUMBER_OF_PARAGRAPHS: Int = 4, var title: Stri
             }
         }
 
-        if(mainDiv == null){
+        if (mainDiv == null) {
             summary = "Error not able to find articles"
             return
         }
@@ -82,12 +83,13 @@ class Summarizer(url: String, var NUMBER_OF_PARAGRAPHS: Int = 4, var title: Stri
                 badP = true
             else {
                 element.children().forEach {
-                    if (it.select("span").size > 0)
+                    if (it.select("span").size + it.select("img").size  > 0)
                         badP = true
                 }
+
             }
             if (!badP) {
-                val sentences = element.text().split("(?<![DSJ]r|Mrs?)[.?!](?!\\S)").joinToString("").split("\n")
+                val sentences = element.text().split("(?<![DSJ]r|Mrs?)[.?!](?!\\S)").joinToString("").split("\n") //Splits the elements into sentences as best as I can
 
                 paragraphs.add(Paragraph(sentences = ArrayList(sentences), index = paragraphs.size))
             }
@@ -112,9 +114,7 @@ class Summarizer(url: String, var NUMBER_OF_PARAGRAPHS: Int = 4, var title: Stri
         allWords.forEach {
             this.paragraphs
             val firstWord = it
-            title?.split(" ")?.forEach {
-                firstWord.weight += firstWord.word.distanceTo(it)
-            }
+            title?.split(" ")?.forEach { firstWord.weight += firstWord.word.distanceTo(it) }
         }
 
         loadSummary()
@@ -133,10 +133,7 @@ class Summarizer(url: String, var NUMBER_OF_PARAGRAPHS: Int = 4, var title: Stri
         paragraphs.removeAt(0)
 
         Collections.sort(paragraphs, Paragraph.WeightComparator())
-        paragraphs.removeIf {
-            paragraphs.indexOf(it) >= NUMBER_OF_PARAGRAPHS - 1
-        }
-
+        paragraphs.removeIf { paragraphs.indexOf(it) >= NUMBER_OF_PARAGRAPHS - 1 }
         Collections.sort(paragraphs, Paragraph.IndexComparator())
 
         paragraphs.forEach {
